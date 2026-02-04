@@ -21,10 +21,14 @@ public static class DiscountCalculator
             };
         }
 
+        var parsedDiscounts = discountCodes
+            .Select(code => DiscountCodeParser.TryParse(code).Discount!)
+            .ToList();
+
         var totalDiscount = 0m;
-        foreach (var code in discountCodes)
+        foreach (var discount in parsedDiscounts)
         {
-            totalDiscount += CalculateSingleDiscount(code, consolidated, subtotal);
+            totalDiscount += CalculateSingleDiscount(discount, consolidated, subtotal);
         }
 
         var discountCents = (int)Math.Round(totalDiscount, MidpointRounding.ToEven);
@@ -58,29 +62,15 @@ public static class DiscountCalculator
     }
 
     private static decimal CalculateSingleDiscount(
-        string code,
+        ParsedDiscount discount,
         List<(string Name, int Price, int Quantity)> items,
-        int subtotal)
+        int subtotal) => discount.Type switch
     {
-        var upper = code.ToUpperInvariant();
-
-        if (upper == "BOGO")
-            return CalculateBogo(items);
-
-        if (upper.StartsWith("FLAT_"))
-        {
-            var amount = int.Parse(upper["FLAT_".Length..]);
-            return amount;
-        }
-
-        if (upper.StartsWith("PERCENT_"))
-        {
-            var percent = int.Parse(upper["PERCENT_".Length..]);
-            return subtotal * percent / 100m;
-        }
-
-        throw new InvalidOperationException($"Unrecognized discount code: {code}");
-    }
+        DiscountType.Flat => discount.Value,
+        DiscountType.Percent => subtotal * discount.Value / 100m,
+        DiscountType.Bogo => CalculateBogo(items),
+        _ => throw new InvalidOperationException($"Unhandled discount type: {discount.Type}")
+    };
 
     private static decimal CalculateBogo(List<(string Name, int Price, int Quantity)> items)
     {

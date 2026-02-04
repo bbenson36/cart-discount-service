@@ -17,7 +17,7 @@ public static class CartRequestValidator
             if (string.IsNullOrWhiteSpace(code))
                 return (false, "Discount codes must not be null or empty.");
 
-            var error = ValidateDiscountCode(code);
+            var (_, error) = DiscountCodeParser.TryParse(code);
             if (error is not null)
                 return (false, error);
         }
@@ -37,34 +37,6 @@ public static class CartRequestValidator
         }
 
         return (true, null);
-    }
-
-    private static string? ValidateDiscountCode(string code)
-    {
-        var upper = code.ToUpperInvariant();
-
-        if (upper == "BOGO")
-            return null;
-
-        if (upper.StartsWith("FLAT_"))
-        {
-            var valueStr = upper["FLAT_".Length..];
-            if (!int.TryParse(valueStr, out var value) || value < 0)
-                return $"Invalid discount code: '{code}'. FLAT_X requires X to be a non-negative integer.";
-            return null;
-        }
-
-        if (upper.StartsWith("PERCENT_"))
-        {
-            var valueStr = upper["PERCENT_".Length..];
-            if (!int.TryParse(valueStr, out var value))
-                return $"Invalid discount code: '{code}'. PERCENT_X requires X to be an integer.";
-            if (value < 0 || value > 100)
-                return $"Invalid discount code: '{code}'. PERCENT_X requires X to be between 0 and 100.";
-            return null;
-        }
-
-        return $"Unrecognized discount code: '{code}'.";
     }
 
     private static string? ValidateLineItem(LineItem item)
