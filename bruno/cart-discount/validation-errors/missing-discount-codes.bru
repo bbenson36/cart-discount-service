@@ -1,0 +1,25 @@
+meta {
+  name: Missing discount codes
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 5 }
+    ],
+    "discountCodes": []
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.error: isString
+}

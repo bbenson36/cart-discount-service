@@ -1,0 +1,27 @@
+meta {
+  name: Discount exceeds subtotal (floors at 0)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "gum", "price": 100, "quantity": 1 }
+    ],
+    "discountCodes": ["FLAT_5000"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 100
+  res.body.discount: eq 100
+  res.body.total: eq 0
+}

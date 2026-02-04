@@ -1,0 +1,27 @@
+meta {
+  name: BOGO with quantity 1 (no discount)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 500, "quantity": 1 }
+    ],
+    "discountCodes": ["BOGO"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 500
+  res.body.discount: eq 0
+  res.body.total: eq 500
+}

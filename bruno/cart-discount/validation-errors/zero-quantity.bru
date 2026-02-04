@@ -1,0 +1,25 @@
+meta {
+  name: Zero quantity
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 0 }
+    ],
+    "discountCodes": ["FLAT_100"]
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.error: contains greater than 0
+}

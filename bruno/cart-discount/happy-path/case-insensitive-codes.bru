@@ -1,0 +1,26 @@
+meta {
+  name: Case insensitive codes
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 1 }
+    ],
+    "discountCodes": ["flat_500"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.discount: eq 500
+  res.body.total: eq 500
+}

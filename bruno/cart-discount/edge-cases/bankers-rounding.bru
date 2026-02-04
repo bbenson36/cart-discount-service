@@ -1,0 +1,27 @@
+meta {
+  name: Banker's rounding (22.5 rounds to 22)
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "item", "price": 150, "quantity": 1 }
+    ],
+    "discountCodes": ["PERCENT_15"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 150
+  res.body.discount: eq 22
+  res.body.total: eq 128
+}
