@@ -1,0 +1,25 @@
+meta {
+  name: Empty cart
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [],
+    "discountCodes": ["FLAT_1000"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 0
+  res.body.discount: eq 0
+  res.body.total: eq 0
+}

@@ -1,0 +1,25 @@
+meta {
+  name: PERCENT out of range
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 5 }
+    ],
+    "discountCodes": ["PERCENT_150"]
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.error: contains PERCENT_X
+}

@@ -1,0 +1,27 @@
+meta {
+  name: PERCENT discount
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 10 }
+    ],
+    "discountCodes": ["PERCENT_15"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 10000
+  res.body.discount: eq 1500
+  res.body.total: eq 8500
+}

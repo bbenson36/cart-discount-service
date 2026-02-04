@@ -1,0 +1,26 @@
+meta {
+  name: Duplicate item price mismatch
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 2 },
+      { "name": "cake", "price": 500, "quantity": 3 }
+    ],
+    "discountCodes": ["FLAT_100"]
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.error: contains conflicting prices
+}

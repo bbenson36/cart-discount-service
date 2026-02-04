@@ -1,0 +1,28 @@
+meta {
+  name: BOGO discount
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 2 },
+      { "name": "cookie", "price": 200, "quantity": 4 }
+    ],
+    "discountCodes": ["BOGO"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 2800
+  res.body.discount: eq 400
+  res.body.total: eq 2400
+}

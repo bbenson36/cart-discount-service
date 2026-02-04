@@ -1,0 +1,27 @@
+meta {
+  name: Duplicate items combined
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": 1000, "quantity": 2 },
+      { "name": "cake", "price": 1000, "quantity": 3 }
+    ],
+    "discountCodes": ["FLAT_0"]
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.subtotal: eq 5000
+  res.body.items.length: eq 1
+}

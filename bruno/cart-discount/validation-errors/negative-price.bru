@@ -1,0 +1,25 @@
+meta {
+  name: Negative price
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/cart/discount
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      { "name": "cake", "price": -100, "quantity": 5 }
+    ],
+    "discountCodes": ["FLAT_100"]
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.error: contains negative
+}
