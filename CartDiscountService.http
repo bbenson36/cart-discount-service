@@ -1,6 +1,39 @@
 @CartDiscountService_HostAddress = http://localhost:5081
 
-GET {{CartDiscountService_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{CartDiscountService_HostAddress}}/cart/discount
+Content-Type: application/json
+
+{
+  "items": [
+    { "name": "cake", "price": 1000, "quantity": 5 },
+    { "name": "cookie", "price": 200, "quantity": 3 }
+  ],
+  "discountCodes": ["FLAT_1000"]
+}
+
+###
+
+POST {{CartDiscountService_HostAddress}}/cart/discount
+Content-Type: application/json
+
+{
+  "items": [
+    { "name": "cake", "price": 1000, "quantity": 2 },
+    { "name": "cookie", "price": 200, "quantity": 4 }
+  ],
+  "discountCodes": ["BOGO"]
+}
+
+###
+
+POST {{CartDiscountService_HostAddress}}/cart/discount
+Content-Type: application/json
+
+{
+  "items": [
+    { "name": "cake", "price": 1000, "quantity": 10 }
+  ],
+  "discountCodes": ["PERCENT_15"]
+}
 
 ###
